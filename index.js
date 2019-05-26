@@ -33,6 +33,15 @@ app.post('/register', (req, res) => {
   });
 });
 
+app.post('/delete', (req, res) => {
+  const email = req.body.email;
+  const q = `DELETE FROM users where email = '${email}'`;
+  connection.query(q, (err, results) => {
+    if (err) throw err;
+    res.redirect('/');
+  });
+});
+
 app.listen(3000, () => {
   console.log('Awaiting your orders, sir. We all love and respect you.');
 });
