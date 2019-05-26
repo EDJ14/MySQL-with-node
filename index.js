@@ -1,6 +1,10 @@
 const express = require('express');
 const mysql = require('mysql');
 const app = express();
+const bodyParser = require('body-parser');
+
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const keys = require('./keys');
 
@@ -16,13 +20,17 @@ app.get('/', (req, res) => {
   connection.query(q, (err, results) => {
     if (err) throw err;
     const count = results[0].count;
-    res.send('We have ' + count + ' peeps here looks like');
+    res.render('home', { count: count });
   });
 });
 
-app.get('/random', (req, res) => {
-  const num = Math.random() * 100;
-  res.send(' ' + num);
+app.post('/register', (req, res) => {
+  const person = { email: req.body.email };
+
+  connection.query('INSERT INTO users SET ?', person, (err, results) => {
+    if (err) throw err;
+    res.redirect('/');
+  });
 });
 
 app.listen(3000, () => {
